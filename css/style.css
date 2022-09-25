@@ -9,6 +9,7 @@ html {
 }
 
 body {
+    min-height: 100vh;
     width: 100%;
     color: #333;
     font-size: 1.5rem;
@@ -25,6 +26,22 @@ body {
     pointer-events: none;
 }
 
+.loading-image {
+    width: 3rem;
+}
+
+.loading-meal-animation {
+    height: 80vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.sorry-animation {
+    width: 20rem;
+}
+
 #header {
     background-color:  #fafafa;
     text-align: center;
@@ -34,7 +51,7 @@ body {
     color: rgba(255, 209, 4, 0.849);
 }
 
-#header h1 {
+#header h2 {
     color: rgba(136, 136, 136, 0.9);
 }
 
@@ -119,6 +136,7 @@ body {
     text-align: center;
     font-style: italic;
     opacity: 0.8;
+    color: #fafafa;
 }
 
 
@@ -134,8 +152,8 @@ body {
 }
 
 #random-recipes{
+    min-height: 40vh;
     width: 100%;
-    min-width: 70vh;
     margin: 2rem 0;
     padding: 0 auto;
     display: flex;
@@ -263,13 +281,6 @@ body {
     font-size: 2rem;
 }
 
-.loading {
-    height: 80vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
 .meal-info-error {
     margin: 2rem auto;
     text-align: center;
@@ -304,5 +315,11 @@ body {
 @media screen and (max-width: 800px) {
     .remove-favorite-button {
         opacity: 1;
+    }
+}
+
+@media screen and (max-width: 400px) {
+    .sorry-animation {
+        width: 15rem;
     }
 }
