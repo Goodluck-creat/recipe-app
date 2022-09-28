@@ -6,6 +6,7 @@ const closePopupBtn = document.querySelector('#close-popup'),
     randomSection = document.querySelector('#random-section'),
     randomRecipes = document.querySelector('#random-recipes'),
     favoriteFoodContainer = document.querySelector('.favorite-foods-container');
+let searchedMeal = false;
 
 
 // Functions
@@ -59,60 +60,64 @@ let loadDOM = (mealData) => {
 
 let fetchRandomMeals = async ()  => {
 
-    //load our animation
-    randomSection.querySelector('#random-header').innerText = `Fetching random meal...`;
-    randomRecipes.innerHTML = '<img class="loading-image" src="images/loading.gif">';
+    // we only want to fetch random meals if no meals was searched
 
-    try {
+    if (!searchedMeal) {
+        // load our animation
+        randomSection.querySelector('#random-header').innerText = `Fetching random meal...`;
+        randomRecipes.innerHTML = '<img class="loading-image" src="images/loading.gif">';
 
-        // fetch data from API
-        let response = await fetch(`https://www.themealdb.com/api/json/v1/1/random.php`);
-        let data = await response.json();
-        let meals = data.meals;
-    
-        // reseting our random section to upload results
-        randomSection.querySelector('#random-header').innerText = `Random Meal`;
-        randomRecipes.innerHTML = '';
-    
-        for(let i = 0; i < meals.length; i++) {
-            loadDOM(meals[i]);
-        }
-    
-        // listening for favorite button clicks of generated items
-        document.querySelectorAll('.fav-btn').forEach((btn)=>{
+        try {
+
+            // fetch data from API
+            let response = await fetch(`https://www.themealdb.com/api/json/v1/1/random.php`);
+            let data = await response.json();
+            let meals = data.meals;
         
-            btn.addEventListener('click', ()=>{
-                if (btn.classList.contains('active')) {
-                    // remove meal ID from local storage
-                    removeFavoriteMealFromLocalStorage(btn.id);
-                    // remove active class from button
-                    btn.classList.remove('active');
-                } else {
-                    // add meal ID to local storage
-                    addFavoriteMealToLocalStorage(btn.id);
-                    // add active class to button
-                    btn.classList.add('active');
-                }
-    
-                // reloading our favorite meals container
-                fetchFavoriteMeals();
+            // reseting our random section to upload results
+            randomSection.querySelector('#random-header').innerText = `Random Meal`;
+            randomRecipes.innerHTML = '';
+        
+            for(let i = 0; i < meals.length; i++) {
+                loadDOM(meals[i]);
+            }
+        
+            // listening for favorite button clicks of generated items
+            document.querySelectorAll('.fav-btn').forEach((btn)=>{
+            
+                btn.addEventListener('click', ()=>{
+                    if (btn.classList.contains('active')) {
+                        // remove meal ID from local storage
+                        removeFavoriteMealFromLocalStorage(btn.id);
+                        // remove active class from button
+                        btn.classList.remove('active');
+                    } else {
+                        // add meal ID to local storage
+                        addFavoriteMealToLocalStorage(btn.id);
+                        // add active class to button
+                        btn.classList.add('active');
+                    }
+        
+                    // reloading our favorite meals container
+                    fetchFavoriteMeals();
+                });
+        
             });
-    
-        });
-    
-        // listening for popup clicks of generated items
-        document.querySelectorAll('.popup').forEach((item)=>{
-            item.addEventListener('click', ()=>{
-                showMealInfo(item.id);
-            })
-        });
-    
-    } catch {
-        // if errors
-        setTimeout(()=>{
-            randomSection.querySelector('#random-header').innerText = `Couldn't fetch random meal`;
-            randomRecipes.innerHTML = `<img class="sorry-animation" src="images/sorry.gif">`;
-        }, 5000);
+        
+            // listening for popup clicks of generated items
+            document.querySelectorAll('.popup').forEach((item)=>{
+                item.addEventListener('click', ()=>{
+                    showMealInfo(item.id);
+                })
+            });
+        
+        } catch {
+            // if errors
+            setTimeout(()=>{
+                randomSection.querySelector('#random-header').innerText = `Couldn't fetch random meal`;
+                randomRecipes.innerHTML = `<img class="sorry-animation" src="images/sorry.gif">`;
+            }, 5000);
+        }
     }
 
 }
@@ -122,6 +127,9 @@ let fetchRandomMeals = async ()  => {
 let  searchMeal = async () => {
     let search = document.querySelector('#search-input').value,
     url = `https://www.themealdb.com/api/json/v1/1/search.php?s=${search}`;
+
+    // pausing our random meal fetch on intervals since a meal was searched
+    searchedMeal = true;
 
     // loading animation
     randomSection.querySelector('#random-header').innerText = `Searching ${search} recipes...`;
@@ -174,7 +182,7 @@ let  searchMeal = async () => {
                         showMealInfo(item.id);
                     });
                 });
-            }, 5000)
+            }, 3000)
 
         } else {
             // if no returned data or null
@@ -189,6 +197,9 @@ let  searchMeal = async () => {
         randomRecipes.innerHTML = '<img class="sorry-animation" src="images/sorry.gif">';
         }, 3000);
     }
+
+    // wait 2 min to unset fetch random meal pause
+    setTimeout(()=>{ searchedMeal = false; }, 120000);
 }
 
 
@@ -330,4 +341,5 @@ searchForm.addEventListener('submit', async (e)=>{
 // Code blocks
 fetchFavoriteMeals();
 fetchRandomMeals();
-setInterval(()=> fetchRandomMeals(), 20000);
+// fetch random meal every 30 seconds
+setInterval(()=>{fetchRandomMeals()}, 30000);
