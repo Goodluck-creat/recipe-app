@@ -198,8 +198,8 @@ let  searchMeal = async () => {
         }, 3000);
     }
 
-    // wait 2 min to unset fetch random meal pause
-    setTimeout(()=>{ searchedMeal = false; }, 120000);
+    // wait 5 min to unset fetch random meal pause
+    setTimeout(()=>{ searchedMeal = false; }, 300000);
 }
 
 
@@ -341,5 +341,5 @@ searchForm.addEventListener('submit', async (e)=>{
 // Code blocks
 fetchFavoriteMeals();
 fetchRandomMeals();
-// fetch random meal every 30 seconds
-setInterval(()=>{fetchRandomMeals()}, 30000);
+// fetch random meal every 1 minute
+setInterval(()=>{fetchRandomMeals()}, 60000);
